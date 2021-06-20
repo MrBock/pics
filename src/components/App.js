@@ -1,23 +1,23 @@
 import React from 'react';
-//by convention we put imports for third party packages above files we created ourself
-import axios from 'axios';
+import unsplash from '../api/unsplash';
 import SearchBar from './SearchBar';
+import ImageList from './ImageList';
 
 class App extends React.Component {
-  async onSearchSubmit(term) {
-    const response = await axios.get('https://api.unsplash.com/search/photos', {
+  state = { images: [] };
+  // "async onSearchSubmit(term)" translates to "onSearchSubmit = async (term) =>..." as an arrow function; note that the async comes after the assignment!
+  onSearchSubmit = async (term) => {
+    const response = await unsplash.get('/search/photos', {
       params: { query: term },
-      headers: {
-        Authorization: 'Client-ID iUY96ywyCtPUtVg649JITZ2mJj7Yyc9fmpSX3STcq_A',
-      },
     });
-    console.log(response.data.results);
-  }
+    this.setState({ images: response.data.results });
+  };
 
   render() {
     return (
       <div className="ui container" style={{ marginTop: '10px' }}>
         <SearchBar onSubmit={this.onSearchSubmit} />
+        <ImageList images={this.state.images} />
       </div>
     );
   }
